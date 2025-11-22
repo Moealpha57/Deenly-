@@ -7,7 +7,6 @@ import MarkdownRenderer from './MarkdownRenderer';
 import MicrophoneIcon from './icons/MicrophoneIcon';
 import SpeakerOnIcon from './icons/SpeakerOnIcon';
 import SpeakerOffIcon from './icons/SpeakerOffIcon';
-import SourceIcon from './icons/SourceIcon';
 import { useLanguage } from '../contexts/LanguageContext';
 
 // Add type definition for Web Speech API
@@ -77,14 +76,17 @@ const ChatView: React.FC<ChatViewProps> = ({ messages, setMessages, userProgress
 
   const decodeAndPlayAudio = async (base64Audio: string, messageId: string) => {
       try {
+          // Initialize AudioContext if not present
           if (!audioContextRef.current) {
-              audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+              audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
           }
 
+          // Resume context if suspended (browser policy)
           if (audioContextRef.current.state === 'suspended') {
               await audioContextRef.current.resume();
           }
 
+          // 1. Decode Base64 string to a Uint8Array (Byte Array)
           const binaryString = atob(base64Audio);
           const len = binaryString.length;
           const bytes = new Uint8Array(len);
@@ -92,12 +94,27 @@ const ChatView: React.FC<ChatViewProps> = ({ messages, setMessages, userProgress
               bytes[i] = binaryString.charCodeAt(i);
           }
 
-          const audioBuffer = await audioContextRef.current.decodeAudioData(bytes.buffer.slice(0));
+          // 2. Interpret bytes as 16-bit PCM (Int16Array)
+          // Gemini returns 16-bit Little Endian PCM.
+          const int16Data = new Int16Array(bytes.buffer);
+          
+          // 3. Create an AudioBuffer
+          // The gemini-2.5-flash-preview-tts model typically returns 24kHz audio.
+          const sampleRate = 24000; 
+          const channels = 1;
+          const audioBuffer = audioContextRef.current.createBuffer(channels, int16Data.length, sampleRate);
+          
+          // 4. Convert Int16 PCM to Float32 [-1.0, 1.0] for the AudioContext
+          const channelData = audioBuffer.getChannelData(0);
+          for (let i = 0; i < int16Data.length; i++) {
+              channelData[i] = int16Data[i] / 32768.0;
+          }
           
           stopAudio(); // Stop any currently playing audio
 
           const source = audioContextRef.current.createBufferSource();
           source.buffer = audioBuffer;
+          source.playbackRate.value = 1.15; // Increase playback speed by 15%
           source.connect(audioContextRef.current.destination);
           
           source.onended = () => {
@@ -124,8 +141,31 @@ const ChatView: React.FC<ChatViewProps> = ({ messages, setMessages, userProgress
       setIsLoadingAudio(messageId);
       stopAudio(); // Stop others
 
-      // Strip markdown for speech
-      const plainText = text.replace(/[*_#\[\]>]/g, ''); 
+      // Patterns for repetitive conversational fillers to remove from audio
+      const fillerPatterns = [
+        /^(As-salamu alaykum|Assalamu alaykum)[!,.]?\s*/i,
+        /(Masha'Allah|Mashallah),?\s*(that's|that is)\s*a\s*(wonderful|great|good|excellent)\s*question[!,.]?\s*/gi,
+        /(That's|That is)\s*an?\s*(important|excellent|great|good)\s*question[!,.]?\s*/gi,
+        /Good thinking[!,.]?\s*/gi,
+        /I'd be happy to help you with that[!,.]?\s*/gi
+      ];
+
+      let cleanedText = text;
+      
+      // Remove filler phrases
+      fillerPatterns.forEach(pattern => {
+        cleanedText = cleanedText.replace(pattern, '');
+      });
+
+      // Clean text for speech: remove markdown, citations, urls, and normalize whitespace
+      const plainText = cleanedText
+        .replace(/\[Source:.*?\]/g, '') // Remove [Source: ...]
+        .replace(/\[\d+\]/g, '')       // Remove [1] citations
+        .replace(/[*_#`\[\]>]/g, '')   // Remove markdown characters
+        .replace(/https?:\/\/\S+/g, '')// Remove URLs
+        .replace(/\s+/g, ' ')          // Collapse whitespace
+        .trim();
+
       const base64Data = await generateSpeech(plainText);
       
       setIsLoadingAudio(null);
@@ -223,6 +263,7 @@ const ChatView: React.FC<ChatViewProps> = ({ messages, setMessages, userProgress
                 for (const groundChunk of groundingChunks) {
                     if (groundChunk.web) {
                         const { uri, title } = groundChunk.web;
+                        
                         if (uri && !seenUris.has(uri)) {
                             sources.push({ uri, title: title || uri });
                             seenUris.add(uri);
@@ -236,7 +277,7 @@ const ChatView: React.FC<ChatViewProps> = ({ messages, setMessages, userProgress
             
             setMessages(prev =>
                 prev.map(msg =>
-                    msg.id === botTypingId ? { ...msg, text: cleanedResponse || botResponse, isTyping: false, sources } : msg
+                    msg.id === botTypingId ? { ...msg, text: cleanedResponse || botResponse, isTyping: false, sources: [...sources] } : msg
                 )
             );
         }
@@ -275,28 +316,6 @@ const ChatView: React.FC<ChatViewProps> = ({ messages, setMessages, userProgress
                     <p className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[8px] leading-tight text-slate-300 dark:text-slate-600 italic">
                         {t('aiDisclaimer')}
                     </p>
-                  )}
-                  {message.sources && message.sources.length > 0 && (
-                    <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <SourceIcon className="h-4 w-4 text-slate-400 dark:text-slate-500" />
-                        <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400">{t('sources')}</h4>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {message.sources.map((source, index) => (
-                          <a
-                            key={index}
-                            href={source.uri}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-1 rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-                            title={source.title}
-                          >
-                            {source.title.length > 50 ? source.title.substring(0, 47) + '...' : source.title}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
                   )}
                 </>
               )}
