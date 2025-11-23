@@ -1,5 +1,6 @@
 
 
+
 export const translations = {
   en: {
     // General
@@ -20,7 +21,6 @@ export const translations = {
 
     // Chat View
     chatPlaceholder: 'Ask me something...',
-    sources: 'Sources',
     aiDisclaimer: 'This is general guidance. Please consult a trusted teacher for deeper learning.',
 
     // Quiz View
@@ -111,7 +111,6 @@ export const translations = {
 
     // Chat View
     chatPlaceholder: 'اسألني شيئًا...',
-    sources: 'المصادر',
     aiDisclaimer: 'هذه إرشادات عامة. يرجى استشارة معلم موثوق لمزيد من التعلم المتعمق.',
 
     // Quiz View
