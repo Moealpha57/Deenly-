@@ -41,9 +41,10 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab }) => {
     { id: 'progress', label: t('progress'), icon: <ProgressIcon isActive={activeTab === 'progress'} /> },
   ];
 
+  // Updated to include safe-area-inset-bottom for iOS devices
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-brand-navy border-t border-slate-200 dark:border-slate-700 shadow-[0_-2px_5px_rgba(0,0,0,0.05)]">
-      <div className="flex justify-around items-center h-full max-w-2xl mx-auto px-2">
+    <div className="fixed bottom-0 left-0 right-0 min-h-[4rem] pb-[env(safe-area-inset-bottom)] bg-white dark:bg-brand-navy border-t border-slate-200 dark:border-slate-700 shadow-[0_-2px_5px_rgba(0,0,0,0.05)] z-50">
+      <div className="flex justify-around items-center h-16 max-w-2xl mx-auto px-2">
         {navItems.map(item => (
           <NavItem
             key={item.id}

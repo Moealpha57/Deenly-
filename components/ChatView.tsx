@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Message, Source, UserProgress, Badge } from '../types';
 import { getChatStream, initializeChat, generateSpeech } from '../services/geminiService';
@@ -340,7 +339,8 @@ const ChatView: React.FC<ChatViewProps> = ({ messages, setMessages, userProgress
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <div className="flex-shrink-0 mt-4 flex items-center space-x-2">
+      {/* Added z-10 and margin tweak to ensure input is clickable and visible above bottom nav/keyboard interactions */}
+      <div className="flex-shrink-0 mt-4 flex items-center space-x-2 z-10 bg-brand-secondary dark:bg-brand-navy py-2">
         <div className="relative w-full">
             <input
             type="text"
