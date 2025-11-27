@@ -12,11 +12,11 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    return (localStorage.getItem('deenBuddyLanguage') as Language) || 'en';
+    return (localStorage.getItem('deenieLanguage') as Language) || 'en';
   });
 
   useEffect(() => {
-    localStorage.setItem('deenBuddyLanguage', language);
+    localStorage.setItem('deenieLanguage', language);
     document.documentElement.lang = language;
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);

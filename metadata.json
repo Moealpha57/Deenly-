@@ -1,6 +1,6 @@
 {
-  "name": "Deenly",
-  "description": "Deenly is a beginner-friendly Islamic learning app with an AI-powered Q&A assistant to teach new Muslims and children basic Islamic knowledge.",
+  "name": "Deenie",
+  "description": "Deenie is a beginner-friendly Islamic learning app with an AI-powered Q&A assistant to teach new Muslims and children basic Islamic knowledge.",
   "requestFramePermissions": [
     "geolocation",
     "microphone"

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import BottomNav, { Tab } from './components/BottomNav';
 import OnboardingView from './components/OnboardingView';
@@ -20,7 +19,7 @@ const VideosView = lazy(() => import('./components/VideosView'));
 
 const AppContent: React.FC = () => {
     const [theme, setTheme] = useState(() => {
-        const savedTheme = localStorage.getItem('deenBuddyTheme');
+        const savedTheme = localStorage.getItem('deenieTheme');
         if (savedTheme) return savedTheme;
         
         if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -29,13 +28,13 @@ const AppContent: React.FC = () => {
         return 'light';
     });
 
-    const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem('deenBuddyOnboardingComplete'));
+    const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem('deenieOnboardingComplete'));
     const [activeTab, setActiveTab] = useState<Tab>('chat');
     const { t } = useLanguage();
 
     // Initialize messages from local storage or default
     const [messages, setMessages] = useState<Message[]>(() => {
-        const savedMessages = localStorage.getItem('deenBuddyMessages');
+        const savedMessages = localStorage.getItem('deenieMessages');
         // If we have saved messages, parse them
         if (savedMessages) {
             try {
@@ -49,7 +48,7 @@ const AppContent: React.FC = () => {
     });
 
     const [userProgress, setUserProgress] = useState<UserProgress>(() => {
-        const savedProgress = localStorage.getItem('deenBuddyUserProgress');
+        const savedProgress = localStorage.getItem('deenieUserProgress');
         return savedProgress ? JSON.parse(savedProgress) : {
             xp: 0,
             streak: 1,
@@ -71,20 +70,20 @@ const AppContent: React.FC = () => {
         } else {
             document.documentElement.classList.remove('dark');
         }
-        localStorage.setItem('deenBuddyTheme', theme);
+        localStorage.setItem('deenieTheme', theme);
     }, [theme]);
 
     // Persist messages whenever they change
     useEffect(() => {
-        localStorage.setItem('deenBuddyMessages', JSON.stringify(messages));
+        localStorage.setItem('deenieMessages', JSON.stringify(messages));
     }, [messages]);
 
     useEffect(() => {
-        localStorage.setItem('deenBuddyUserProgress', JSON.stringify(userProgress));
+        localStorage.setItem('deenieUserProgress', JSON.stringify(userProgress));
     }, [userProgress]);
 
     const handleOnboardingComplete = () => {
-        localStorage.setItem('deenBuddyOnboardingComplete', 'true');
+        localStorage.setItem('deenieOnboardingComplete', 'true');
         setShowOnboarding(false);
     };
 
@@ -118,7 +117,7 @@ const AppContent: React.FC = () => {
             <header className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
                 <div className="flex items-center gap-2">
                     <Logo className="h-8 w-8 text-brand-primary" />
-                    <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Deenly</h1>
+                    <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Deenie</h1>
                 </div>
                 <div className="flex items-center gap-2">
                     <LanguageToggle />

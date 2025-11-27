@@ -1,6 +1,3 @@
-
-
-
 export const translations = {
   en: {
     // General
@@ -8,7 +5,7 @@ export const translations = {
     search: 'Search',
 
     // Onboarding
-    welcomeTitle: 'Welcome to Deenly!',
+    welcomeTitle: 'Welcome to Deenie!',
     welcomeMessage: 'Your friendly guide to learning the basics of Islam. Chat, take quizzes, and watch videos to grow your knowledge.',
     getStarted: "Let's Get Started",
 
@@ -90,7 +87,7 @@ export const translations = {
     comingSoonVideosDesc: "We're preparing helpful videos to aid your learning journey. Please check back later!",
     
     // App Initial Message
-    initialBotMessage: "As-salamu alaykum! I'm Deenly. How can I help you learn about Islam today?",
+    initialBotMessage: "As-salamu alaykum! I'm Deenie. How can I help you learn about Islam today?",
   },
   ar: {
     // General
@@ -98,7 +95,7 @@ export const translations = {
     search: 'بحث',
 
     // Onboarding
-    welcomeTitle: 'أهلاً بك في دينلي!',
+    welcomeTitle: 'أهلاً بك في Deenie!',
     welcomeMessage: 'دليلك الودود لتعلم أساسيات الإسلام. تحدث، شارك في اختبارات، وشاهد فيديوهات لتنمية معرفتك.',
     getStarted: 'لنبدأ',
     
@@ -180,7 +177,7 @@ export const translations = {
     comingSoonVideosDesc: 'نحن نجهز فيديوهات مفيدة لمساعدتك في رحلتك التعليمية. يرجى التحقق مرة أخرى لاحقًا!',
     
     // App Initial Message
-    initialBotMessage: 'السلام عليكم! أنا دينلي. كيف يمكنني مساعدتك في تعلم الإسلام اليوم؟',
+    initialBotMessage: 'السلام عليكم! أنا Deenie. كيف يمكنني مساعدتك في تعلم الإسلام اليوم؟',
   }
 };
 

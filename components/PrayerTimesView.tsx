@@ -11,7 +11,7 @@ interface CachedPrayerData {
   timestamp: number;
 }
 
-const CACHE_KEY = 'deenBuddyPrayerData';
+const CACHE_KEY = 'deeniePrayerData';
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 const PrayerTimesView: React.FC = () => {

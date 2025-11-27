@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Chat, GenerateContentResponse, Type, Content, Modality } from '@google/genai';
 import { Quiz, Message } from '../types';
 
@@ -38,7 +37,7 @@ export const initializeChat = (previousMessages: Message[] = []) => {
         model: 'gemini-2.5-flash',
         history: history,
         config: {
-            systemInstruction: `You are Deenly, a friendly, engaging, and knowledgeable AI guide for children and new Muslims.
+            systemInstruction: `You are Deenie, a friendly, engaging, and knowledgeable AI guide for children and new Muslims.
 Your personality is patient, encouraging, and cheerful. Your purpose is to simplify Islamic concepts.
 
 **KNOWLEDGE SCOPE:**

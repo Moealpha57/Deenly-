@@ -4,7 +4,7 @@ const Logo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 100 100"
-    aria-label="Deenly Logo"
+    aria-label="Deenie Logo"
     {...props}
   >
     <g transform="rotate(-15 50 50) scale(0.95) translate(2, 2)">

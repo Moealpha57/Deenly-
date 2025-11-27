@@ -33,8 +33,8 @@ const ShareBadgeModal: React.FC<ShareBadgeModalProps> = ({
     // Placeholder for share logic
     if (navigator.share) {
       navigator.share({
-        title: `I earned the ${badgeName} badge on Deen Buddy!`,
-        text: `Check out Deen Buddy to learn about Islam. I just earned the "${badgeName}" badge!`,
+        title: `I earned the ${badgeName} badge on Deenie!`,
+        text: `Check out Deenie to learn about Islam. I just earned the "${badgeName}" badge!`,
         url: window.location.href,
       }).catch(console.error);
     } else {
