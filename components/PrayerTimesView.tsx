@@ -123,13 +123,21 @@ const PrayerTimesView: React.FC = () => {
       setError(null);
 
       try {
-          const geocodeResponse = await fetch(`https://geocode.maps.co/search?q=${encodeURIComponent(searchInput)}`);
+          // Using Open-Meteo Geocoding API which is free, reliable, and CORS-friendly
+          const geocodeResponse = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchInput)}&count=1&language=en&format=json`);
+          
           if (!geocodeResponse.ok) throw new Error("Could not connect to the location service.");
+          
           const geocodeData = await geocodeResponse.json();
-          if (geocodeData.length === 0) throw new Error(t('locationNotFound', { city: searchInput }));
+          
+          if (!geocodeData.results || geocodeData.results.length === 0) {
+              throw new Error(t('locationNotFound', { city: searchInput }));
+          }
 
-          const { lat, lon, display_name } = geocodeData[0];
-          await fetchPrayerDataForCoords(parseFloat(lat), parseFloat(lon), display_name);
+          const result = geocodeData.results[0];
+          const display_name = `${result.name}${result.country ? `, ${result.country}` : ''}`;
+          
+          await fetchPrayerDataForCoords(result.latitude, result.longitude, display_name);
       } catch (err) {
           setError(err instanceof Error ? err.message : 'An error occurred during search.');
           setIsLoading(false);
